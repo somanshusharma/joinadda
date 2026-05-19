@@ -1,5 +1,6 @@
-export const APP_NAME = "Adda";
-export const APP_TAGLINE = "Find your people. Plan real hangouts.";
+export const APP_NAME = "JoinAdda";
+export const APP_WORDMARK = "joinadda";
+export const APP_TAGLINE = "Meet, Travel, Hangout";
 export const DEFAULT_CITY_SLUG = "mohali";
 
 export const VIBE_OPTIONS = [

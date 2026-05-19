@@ -9,7 +9,7 @@ export function MobileTopBar({ user }: { user: ShellUser }) {
         href="/"
         className="font-serif text-2xl font-semibold text-primary-600 tracking-tight"
       >
-        adda
+        joinadda
       </Link>
       {user ? (
         <NotificationBell

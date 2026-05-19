@@ -206,7 +206,7 @@ function NotifRow({ notif }: { notif: NotificationRow }) {
       <div className="ml-4 flex-1 min-w-0 pr-3">
         <p className="text-base text-ink leading-snug">
           <span className="font-bold">
-            {isSystem ? "Adda" : actorName}
+            {isSystem ? "JoinAdda" : actorName}
           </span>{" "}
           <span className="text-ink-secondary">{VERBS[notif.type]}</span>
         </p>

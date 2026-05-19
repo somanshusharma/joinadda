@@ -89,7 +89,7 @@ function GuestMatchTeaser() {
         one person a day
       </p>
       <h3 className="font-serif text-2xl md:text-3xl font-semibold text-ink leading-tight mb-3">
-        Adda picks someone you&apos;d actually click with.
+        JoinAdda picks someone you&apos;d actually click with.
       </h3>
       <p className="text-sm text-ink-secondary mb-5 max-w-md mx-auto">
         Sign up to get a daily friend suggestion based on your city, hometown

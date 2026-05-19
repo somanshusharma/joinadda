@@ -109,7 +109,7 @@ export function OnboardingFlow({
         href="/"
         className="fixed top-6 left-6 hidden md:block text-2xl font-extrabold tracking-tight text-primary-600"
       >
-        Adda
+        joinadda
       </Link>
 
       <main className="w-full max-w-2xl">

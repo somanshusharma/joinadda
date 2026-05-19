@@ -49,7 +49,7 @@ export function WelcomeModal() {
               What&apos;s new
             </span>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight text-ink">
-              Adda just got more fun.
+              JoinAdda just got more fun.
             </h2>
             <p className="mt-1.5 text-sm text-ink-secondary">
               Less scrolling. More doing.

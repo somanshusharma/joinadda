@@ -11,9 +11,9 @@ import {
 } from "./_home/FirstHangoutModal";
 
 export const metadata = {
-  title: "Adda — find your people, minus the fakeness",
+  title: "JoinAdda — Meet, Travel, Hangout",
   description:
-    "A cozy spot for Indian professionals to make real friends, plan trips, and hang out. Like a chai-stall conversation, but for your career and life.",
+    "JoinAdda is a cozy spot for Indian professionals to meet, travel, and hang out. Like a chai-stall conversation, but for your career and life.",
 };
 
 type Profile = {

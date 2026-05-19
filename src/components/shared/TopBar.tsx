@@ -12,7 +12,7 @@ export function TopBar({ user }: { user: ShellUser }) {
             bubble_chart
           </span>
           <span className="font-serif text-2xl font-semibold text-primary-600 tracking-tight">
-            adda
+            joinadda
           </span>
         </Link>
 

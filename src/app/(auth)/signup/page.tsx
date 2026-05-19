@@ -22,7 +22,7 @@ export default function SignupPage() {
             <SignupForm />
           </div>
           <p className="mt-6 text-sm text-ink-secondary">
-            Already on Adda?{" "}
+            Already on JoinAdda?{" "}
             <Link
               href="/login"
               className="font-semibold text-primary-600 hover:underline"

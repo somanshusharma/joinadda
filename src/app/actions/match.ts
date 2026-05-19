@@ -17,9 +17,9 @@ function buildIcebreaker({
     return `Hey! Saw we're both from ${hometown}. How's ${currentCity ?? "your city"} treating you?`;
   }
   if (sharedVibe) {
-    return `Hey! Adda matched us — we're both into ${sharedVibe.toLowerCase()}. Got a favourite spot for it?`;
+    return `Hey! JoinAdda matched us — we're both into ${sharedVibe.toLowerCase()}. Got a favourite spot for it?`;
   }
-  return "Hey! Adda matched us today — say hi?";
+  return "Hey! JoinAdda matched us today — say hi?";
 }
 
 export async function skipDailyMatch(matchId: string) {
@@ -109,7 +109,7 @@ export async function sayHiToMatch(matchId: string, otherProfileId: string) {
       }>(),
   ]);
 
-  let icebreaker = "Hey! Adda matched us today — say hi?";
+  let icebreaker = "Hey! JoinAdda matched us today — say hi?";
   if (me && them) {
     const sharedHome =
       me.hometown_city_id &&

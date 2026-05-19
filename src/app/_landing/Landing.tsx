@@ -44,7 +44,7 @@ export default function Landing() {
             href="/"
             className="text-2xl font-outfit font-bold text-primary-700 tracking-tight"
           >
-            Adda
+            joinadda
           </Link>
           <nav className="flex items-center gap-3">
             <Link
@@ -77,12 +77,12 @@ export default function Landing() {
                 </span>
               </div>
               <h1 className="font-outfit text-[44px] sm:text-[52px] md:text-[72px] leading-[1.05] text-ink mb-8 tracking-tight font-bold">
-                Find your people, minus the fakeness.
+                Meet. Travel. Hangout.
               </h1>
               <p className="text-base md:text-[16px] leading-relaxed text-ink-secondary max-w-lg mb-12 opacity-90">
-                A cozy spot for Indian professionals to make real friends, plan
-                trips, and hang out. Like a chai-stall conversation, but for
-                your career and life.
+                JoinAdda is a cozy spot for Indian professionals to make real
+                friends, plan trips, and hang out. Like a chai-stall
+                conversation, but for your career and life.
               </p>
               <WaitlistForm variant="hero" source="hero" />
               <div className="mt-6 flex items-center gap-2 px-1">
@@ -284,16 +284,16 @@ export default function Landing() {
         <div className="flex flex-col md:flex-row justify-between items-center px-5 md:px-8 max-w-7xl mx-auto gap-8">
           <div className="flex flex-col items-center md:items-start gap-4">
             <div className="font-outfit text-2xl font-bold text-primary-700">
-              Adda
+              joinadda
             </div>
             <p className="text-[12px] text-ink-muted text-center md:text-left">
-              © {new Date().getFullYear()} Adda.{" "}
+              © {new Date().getFullYear()} JoinAdda · Meet, Travel, Hangout.{" "}
               <br className="md:hidden" />
               Built with ❤️ for the Indian Professional.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-            {["About Adda", "Community Rules", "Privacy", "Terms", "Support"].map(
+            {["About JoinAdda", "Community Rules", "Privacy", "Terms", "Support"].map(
               (label) => (
                 <Link
                   key={label}

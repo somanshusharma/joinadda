@@ -158,7 +158,7 @@ async function People({
         <EmptyState
           icon={<Sparkles />}
           title="Nobody here yet"
-          description="Adda is just starting out in your city. Invite a friend?"
+          description="JoinAdda is just starting out in your city. Invite a friend?"
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -208,7 +208,7 @@ async function Communities({
       <EmptyState
         icon={<Users />}
         title="No communities yet"
-        description="Hang tight — more are coming as Adda grows."
+        description="Hang tight — more are coming as JoinAdda grows."
       />
     );
   }
