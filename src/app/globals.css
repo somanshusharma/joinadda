@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand — warm coral/orange */
+  --color-primary-50:  #FFF4ED;
+  --color-primary-100: #FFE5D1;
+  --color-primary-200: #FFC9A3;
+  --color-primary-400: #FF8A4C;
+  --color-primary-500: #FF6B2B;
+  --color-primary-600: #E54D0C;
+  --color-primary-700: #BC3D08;
+  --color-primary-900: #7C2A09;
+
+  /* Mango (secondary container — used for active nav pill, badges) */
+  --color-mango-300: #FFDF9F;
+  --color-mango-400: #FFC329;
+  --color-mango-500: #FBBF24;
+  --color-mango-700: #6F5100;
+
+  /* Accent yellow (kept for back-compat) */
+  --color-accent-100: #FEF3C7;
+  --color-accent-400: #FBBF24;
+  --color-accent-500: #F59E0B;
+
+  /* Pastel section tints */
+  --color-peach:  #FFE0CC;
+  --color-lilac:  #E7DEF5;
+  --color-sky:    #DEEAF5;
+  --color-sage:   #DDEAD3;
+
+  /* Surfaces — warm Sunday-morning */
+  --color-surface:          #FFF8F2;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-muted:    #F5EDE2;
+  --color-surface-low:      #F9F3EB;
+  --color-surface-border:   #EAE3D8;
+  --color-surface-dark:     #33302C; /* for the dark "who's next" card */
+
+  /* Ink */
+  --color-ink:           #1D1B17;
+  --color-ink-secondary: #594138;
+  --color-ink-muted:     #8A847B;
+  --color-ink-light:     #B5AFA5;
+
+  /* Semantic */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger:  #EF4444;
+
+  --font-sans:     "Inter", system-ui, sans-serif;
+  --font-display:  "Outfit", "Inter", sans-serif;          /* section headings */
+  --font-serif:    "Fraunces", "Outfit", serif;            /* big editorial headlines */
+  --font-sticker:  "Kalam", "Caveat", cursive;             /* handwritten accents */
+}
+
+html, body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Type helpers */
+.font-serif   { font-family: var(--font-serif); }
+.font-display { font-family: var(--font-display); }
+.font-sticker { font-family: var(--font-sticker); }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* The signature soft warm shadow used across cards */
+.sun-kissed-shadow {
+  box-shadow: 0 4px 24px -4px rgba(168, 57, 0, 0.06);
+}
+
+/* Hero gradient — coral → mango */
+.mango-gradient {
+  background: linear-gradient(135deg, #FF6B2B 0%, #FFC329 100%);
+}
+
+/* Material Symbols Outlined icon font (loaded from Google Fonts) */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+}
