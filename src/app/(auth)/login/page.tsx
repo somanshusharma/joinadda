@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { LoginForm } from "./LoginForm";
 import { Logo } from "@/components/ui/Logo";
@@ -19,7 +20,9 @@ export default function LoginPage() {
             Log in and see what your people are up to.
           </p>
           <div className="mt-8">
-            <LoginForm />
+            <Suspense fallback={<div>Loading login form…</div>}>
+              <LoginForm />
+            </Suspense>
           </div>
           <p className="mt-6 text-sm text-ink-secondary">
             New here?{" "}
