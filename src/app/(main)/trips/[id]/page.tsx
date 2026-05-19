@@ -5,6 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { RSVPButton } from "@/components/events/RSVPButton";
 import { OpenEventChatButton } from "@/components/events/OpenEventChatButton";
 import { SignUpCta } from "@/components/shared/SignUpCta";
+import { TripExpensesPanel } from "@/components/trips/TripExpensesPanel";
 import type { AttendeePreview } from "@/components/events/AttendeeStack";
 import type { RsvpStatus } from "@/lib/types";
 
@@ -95,6 +96,8 @@ export default async function EventDetailPage({
   }
 
   const isOrganizer = user?.id === event.organizer_id;
+  const isAttendee =
+    isOrganizer || (!!user && myStatus === "going");
   const isFull =
     event.max_attendees !== null && event.attendee_count >= event.max_attendees;
   const isCancelled = event.status === "cancelled";
@@ -274,6 +277,16 @@ export default async function EventDetailPage({
             </p>
           ) : null}
         </div>
+      </section>
+
+      {/* Trip expenses — Splitwise-style bill splitter */}
+      <section className="mt-8 px-4 md:px-6">
+        <TripExpensesPanel
+          eventId={event.id}
+          currentUserId={user?.id ?? null}
+          isAttendee={isAttendee}
+          members={attendees}
+        />
       </section>
 
       {/* Going */}
