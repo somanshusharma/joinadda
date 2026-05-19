@@ -8,6 +8,7 @@ import {
   MetAtPanel,
   type MetCandidate,
 } from "@/components/hangouts/MetAtPanel";
+import { HangoutPolls } from "@/components/hangouts/HangoutPolls";
 import { timeAgo } from "@/lib/utils";
 
 type HangoutDetailRow = {
@@ -248,8 +249,17 @@ export default async function HangoutDetailPage({
         </div>
       </article>
 
+      {/* Quick polls */}
+      <section className="mt-8">
+        <HangoutPolls
+          hangoutId={hangout.id}
+          currentUserId={user?.id ?? null}
+          isMember={isJoined || isHost}
+        />
+      </section>
+
       {/* Going */}
-      <section>
+      <section className="mt-8">
         <h4 className="font-display text-xl font-semibold mb-6 flex items-baseline gap-2">
           going{" "}
           <span className="text-ink-muted font-normal text-base">
