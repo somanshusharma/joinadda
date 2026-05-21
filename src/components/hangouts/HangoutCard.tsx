@@ -90,10 +90,11 @@ export function HangoutCard({
         {currentUserId ? (
           <JoinHangoutButton
             hangoutId={hangout.id}
-            initialJoined={joined}
+            initialStatus={joined ? "going" : "none"}
             isFull={isFull}
             isHost={isHost}
             isCancelled={isCancelled}
+            requiresApproval={true}
             size="sm"
           />
         ) : (

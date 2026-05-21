@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Avatar } from "@/components/ui/Avatar";
 import { activityLabel, activityIcon } from "@/lib/config";
+import { ReviewList } from "@/components/reviews/ReviewList";
+import { RatingBadge } from "@/components/reviews/RatingBadge";
 
 type ListingDetail = {
   id: string;
@@ -19,6 +21,8 @@ type ListingDetail = {
   contact_whatsapp: string | null;
   photo_url: string | null;
   is_featured: boolean;
+  avg_rating: number | null;
+  review_count: number | null;
   host: {
     id: string;
     username: string;
@@ -53,7 +57,7 @@ export default async function SpotDetailPage({
   const { data } = await supabase
     .from("host_listings")
     .select(
-      "id, title, description, activity_tag, address, map_url, price_inr, price_unit, capacity_min, capacity_max, contact_phone, contact_whatsapp, photo_url, is_featured, host:host_id(id, username, display_name, avatar_url, is_verified_host, host_bio), city:city_id(name)",
+      "id, title, description, activity_tag, address, map_url, price_inr, price_unit, capacity_min, capacity_max, contact_phone, contact_whatsapp, photo_url, is_featured, avg_rating, review_count, host:host_id(id, username, display_name, avatar_url, is_verified_host, host_bio), city:city_id(name)",
     )
     .eq("id", id)
     .eq("is_active", true)
@@ -115,6 +119,15 @@ export default async function SpotDetailPage({
           <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight text-ink leading-tight">
             {data.title}
           </h1>
+          {data.review_count ? (
+            <div className="mt-2">
+              <RatingBadge
+                rating={data.avg_rating}
+                count={data.review_count}
+                size="md"
+              />
+            </div>
+          ) : null}
           {data.address ? (
             <p className="mt-1 text-sm text-ink-muted">
               {data.address}
@@ -221,6 +234,16 @@ export default async function SpotDetailPage({
           ) : null}
         </div>
       </article>
+
+      {/* Reviews — anyone signed in can review a spot */}
+      <ReviewList
+        subjectType="spot"
+        subjectId={data.id}
+        subjectLabel={data.title}
+        avgRating={data.avg_rating}
+        reviewCount={data.review_count}
+        canReview={true}
+      />
     </div>
   );
 }

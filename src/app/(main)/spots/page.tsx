@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ACTIVITY_TAGS, activityLabel } from "@/lib/config";
+import { RatingBadge } from "@/components/reviews/RatingBadge";
 
 export const metadata: Metadata = {
   title: "Spots — venues and partners hosting on JoinAdda",
@@ -21,6 +22,8 @@ type ListingRow = {
   capacity_max: number | null;
   photo_url: string | null;
   is_featured: boolean;
+  avg_rating: number | null;
+  review_count: number | null;
   city: { name: string } | null;
 };
 
@@ -60,7 +63,7 @@ export default async function SpotsPage({
   let q = supabase
     .from("host_listings")
     .select(
-      "id, title, description, activity_tag, address, price_inr, price_unit, capacity_max, photo_url, is_featured, city:city_id(name)",
+      "id, title, description, activity_tag, address, price_inr, price_unit, capacity_max, photo_url, is_featured, avg_rating, review_count, city:city_id(name)",
     )
     .eq("is_active", true)
     .order("is_featured", { ascending: false })
@@ -187,11 +190,11 @@ export default async function SpotsPage({
                   <span className="font-bold text-primary-700">
                     {priceLabel(l)}
                   </span>
-                  {l.capacity_max ? (
-                    <span className="text-xs text-ink-muted">
-                      up to {l.capacity_max}
-                    </span>
-                  ) : null}
+                  <RatingBadge
+                    rating={l.avg_rating}
+                    count={l.review_count}
+                    size="xs"
+                  />
                 </div>
               </div>
             </Link>

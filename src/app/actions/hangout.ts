@@ -13,6 +13,7 @@ export type CreateHangoutInput = {
   max_joiners: number;
   activity_tag?: string | null;
   host_listing_id?: string | null;
+  requires_approval?: boolean;
 };
 
 export async function createHangout(input: CreateHangoutInput) {
@@ -75,6 +76,7 @@ export async function createHangout(input: CreateHangoutInput) {
       visibility: "city",
       activity_tag: input.activity_tag ?? null,
       host_listing_id: listingId,
+      requires_approval: input.requires_approval ?? true,
     })
     .select("id")
     .single();
@@ -93,14 +95,83 @@ export async function joinHangout(hangoutId: string) {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: "Not signed in" };
 
+  // Decide pending vs going based on hangout's approval setting
+  const { data: h } = await supabase
+    .from("hangouts")
+    .select("requires_approval, host_id")
+    .eq("id", hangoutId)
+    .single<{ requires_approval: boolean | null; host_id: string }>();
+
+  // Hosts joining their own hangout don't need approval
+  const isHost = h?.host_id === user.id;
+  const targetStatus =
+    h?.requires_approval && !isHost ? "pending" : "going";
+
   const { error } = await supabase
     .from("hangout_joiners")
-    .upsert({ hangout_id: hangoutId, profile_id: user.id, status: "going" });
+    .upsert({
+      hangout_id: hangoutId,
+      profile_id: user.id,
+      status: targetStatus,
+    });
   if (error) return { ok: false as const, error: error.message };
 
   revalidatePath("/hangouts");
   revalidatePath(`/hangouts/${hangoutId}`);
   revalidatePath("/");
+  return { ok: true as const, status: targetStatus };
+}
+
+export async function approveJoiner(hangoutId: string, profileId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false as const, error: "Not signed in" };
+
+  // RLS will also enforce this; we double-check for clear error
+  const { data: h } = await supabase
+    .from("hangouts")
+    .select("host_id")
+    .eq("id", hangoutId)
+    .single<{ host_id: string }>();
+  if (!h || h.host_id !== user.id) {
+    return { ok: false as const, error: "Only the host can approve" };
+  }
+
+  const { error } = await supabase
+    .from("hangout_joiners")
+    .update({ status: "going" })
+    .eq("hangout_id", hangoutId)
+    .eq("profile_id", profileId);
+  if (error) return { ok: false as const, error: error.message };
+  revalidatePath(`/hangouts/${hangoutId}`);
+  return { ok: true as const };
+}
+
+export async function declineJoiner(hangoutId: string, profileId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false as const, error: "Not signed in" };
+
+  const { data: h } = await supabase
+    .from("hangouts")
+    .select("host_id")
+    .eq("id", hangoutId)
+    .single<{ host_id: string }>();
+  if (!h || h.host_id !== user.id) {
+    return { ok: false as const, error: "Only the host can decline" };
+  }
+
+  const { error } = await supabase
+    .from("hangout_joiners")
+    .update({ status: "declined" })
+    .eq("hangout_id", hangoutId)
+    .eq("profile_id", profileId);
+  if (error) return { ok: false as const, error: error.message };
+  revalidatePath(`/hangouts/${hangoutId}`);
   return { ok: true as const };
 }
 

@@ -74,6 +74,7 @@ export function CreateHangoutForm({
   const [pickedListingId, setPickedListingId] = useState<string | null>(
     prefilledListing?.id ?? null,
   );
+  const [requiresApproval, setRequiresApproval] = useState(true);
 
   // When activity tag changes, fetch matching listings in user's city
   useEffect(() => {
@@ -149,6 +150,7 @@ export function CreateHangoutForm({
         max_joiners: maxJoiners,
         activity_tag: activityTag,
         host_listing_id: pickedListingId,
+        requires_approval: requiresApproval,
       });
       if (res && !res.ok) setError(res.error);
     });
@@ -389,6 +391,35 @@ export function CreateHangoutForm({
             className="mt-3 w-full bg-surface-low border border-surface-border rounded-2xl py-3 px-5 focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition-all text-sm placeholder:text-ink-light resize-none"
           />
         </Section>
+      ) : null}
+
+      {/* Safety toggle */}
+      {activityTag ? (
+        <section className="space-y-3">
+          <div className="flex items-baseline gap-2 px-1">
+            <span className="text-[11px] font-bold text-primary-600 tracking-wider">
+              {String(pickedListingId ? 6 : 7).padStart(2, "0")}
+            </span>
+            <label className="text-sm font-semibold text-ink">Safety</label>
+          </div>
+          <label className="flex items-start gap-3 p-4 rounded-2xl bg-surface-low border border-surface-border cursor-pointer">
+            <input
+              type="checkbox"
+              checked={requiresApproval}
+              onChange={(e) => setRequiresApproval(e.target.checked)}
+              className="size-5 mt-0.5 accent-[var(--color-primary-500)]"
+            />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-ink">
+                Manually approve each joiner
+              </p>
+              <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
+                Recommended. People send a request — you check their profile
+                and accept or decline. Uncheck for casual instant-join hangouts.
+              </p>
+            </div>
+          </label>
+        </section>
       ) : null}
 
       {error ? <p className="text-sm text-danger">{error}</p> : null}

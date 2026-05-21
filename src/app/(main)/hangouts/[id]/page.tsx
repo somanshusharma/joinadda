@@ -10,6 +10,11 @@ import {
 } from "@/components/hangouts/MetAtPanel";
 import { HangoutPolls } from "@/components/hangouts/HangoutPolls";
 import { HangoutVenueCard } from "@/components/hangouts/HangoutVenueCard";
+import { ReviewList } from "@/components/reviews/ReviewList";
+import {
+  PendingRequests,
+  type PendingRequester,
+} from "@/components/hangouts/PendingRequests";
 import { timeAgo } from "@/lib/utils";
 
 type HangoutDetailRow = {
@@ -27,6 +32,9 @@ type HangoutDetailRow = {
   created_at: string;
   host_listing_id: string | null;
   activity_tag: string | null;
+  requires_approval: boolean | null;
+  avg_rating: number | null;
+  review_count: number | null;
   host: {
     id: string;
     username: string;
@@ -51,14 +59,16 @@ export default async function HangoutDetailPage({
   const { data: hangout } = await supabase
     .from("hangouts")
     .select(
-      "id, activity, description, time_window, starts_at, location, max_joiners, joiner_count, status, host_id, conversation_id, created_at, host_listing_id, activity_tag, host:host_id(id, username, display_name, avatar_url, profession), city:city_id(name)",
+      "id, activity, description, time_window, starts_at, location, max_joiners, joiner_count, status, host_id, conversation_id, created_at, host_listing_id, activity_tag, requires_approval, avg_rating, review_count, host:host_id(id, username, display_name, avatar_url, profession), city:city_id(name)",
     )
     .eq("id", id)
     .maybeSingle<HangoutDetailRow>();
 
   if (!hangout) notFound();
 
-  const [joinerRowsRes, myJoinRes] = await Promise.all([
+  const isHost = !!user && hangout.host_id === user.id;
+
+  const [joinerRowsRes, myJoinRes, pendingRowsRes] = await Promise.all([
     supabase
       .from("hangout_joiners")
       .select(
@@ -73,6 +83,15 @@ export default async function HangoutDetailPage({
           .eq("hangout_id", id)
           .eq("profile_id", user.id)
           .maybeSingle<{ status: string }>()
+      : Promise.resolve({ data: null }),
+    isHost
+      ? supabase
+          .from("hangout_joiners")
+          .select(
+            "profile:profile_id(id, username, display_name, avatar_url, profession, avg_rating, review_count)",
+          )
+          .eq("hangout_id", id)
+          .eq("status", "pending")
       : Promise.resolve({ data: null }),
   ]);
   const joinerRows = joinerRowsRes.data;
@@ -91,7 +110,16 @@ export default async function HangoutDetailPage({
     .filter((p): p is NonNullable<JoinerRow["profile"]> => p !== null);
 
   const isJoined = myJoin?.status === "going";
-  const isHost = !!user && hangout.host_id === user.id;
+  const isPending = myJoin?.status === "pending";
+  const isDeclined = myJoin?.status === "declined";
+  const myJoinStatus: "none" | "pending" | "going" | "declined" =
+    myJoin?.status === "going"
+      ? "going"
+      : myJoin?.status === "pending"
+        ? "pending"
+        : myJoin?.status === "declined"
+          ? "declined"
+          : "none";
   const isFull = hangout.joiner_count >= hangout.max_joiners;
   const isCancelled = hangout.status === "cancelled";
   const slotsLeft = Math.max(0, hangout.max_joiners - hangout.joiner_count);
@@ -259,10 +287,11 @@ export default async function HangoutDetailPage({
             {user ? (
               <JoinHangoutButton
                 hangoutId={hangout.id}
-                initialJoined={isJoined}
+                initialStatus={myJoinStatus}
                 isFull={isFull}
                 isHost={isHost}
                 isCancelled={isCancelled}
+                requiresApproval={hangout.requires_approval ?? true}
                 size="lg"
               />
             ) : (
@@ -286,6 +315,37 @@ export default async function HangoutDetailPage({
           ) : null}
         </div>
       </article>
+
+      {/* Host-only: pending join requests */}
+      {isHost ? (
+        <PendingRequests
+          hangoutId={hangout.id}
+          requesters={
+            (
+              (pendingRowsRes.data as
+                | { profile: PendingRequester | null }[]
+                | null) ?? []
+            )
+              .map((p) => p.profile)
+              .filter((p): p is PendingRequester => p !== null)
+          }
+        />
+      ) : null}
+
+      {/* Pending-state hint for the requester */}
+      {!isHost && (isPending || isDeclined) ? (
+        <div
+          className={`mt-6 rounded-2xl p-4 text-sm font-semibold border ${
+            isDeclined
+              ? "bg-danger/10 border-danger/30 text-danger"
+              : "bg-sky/40 border-sky text-ink"
+          }`}
+        >
+          {isDeclined
+            ? "Your request wasn't accepted this time. Try another hangout that fits."
+            : "Request sent — waiting for host to accept."}
+        </div>
+      ) : null}
 
       {/* Linked venue (host listing) */}
       {venue ? (
@@ -370,6 +430,20 @@ export default async function HangoutDetailPage({
           </div>
         )}
       </section>
+
+      {/* Reviews — only after start time, attendees can review */}
+      {showMetPanel ? (
+        <ReviewList
+          subjectType="hangout"
+          subjectId={hangout.id}
+          subjectLabel="this hangout"
+          avgRating={hangout.avg_rating}
+          reviewCount={hangout.review_count}
+          canReview={isJoined || isHost}
+          contextType="hangout"
+          contextId={hangout.id}
+        />
+      ) : null}
 
       {/* "How did it go?" — after the start time, for attendees */}
       {showMetPanel ? (

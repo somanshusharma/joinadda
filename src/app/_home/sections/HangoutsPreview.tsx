@@ -88,10 +88,11 @@ export async function HangoutsPreview({
             {userId ? (
               <JoinHangoutButton
                 hangoutId={h.id}
-                initialJoined={joinedIds.has(h.id)}
+                initialStatus={joinedIds.has(h.id) ? "going" : "none"}
                 isFull={h.joiner_count >= h.max_joiners}
                 isHost={h.host?.id === userId}
                 isCancelled={h.status === "cancelled"}
+                requiresApproval={true}
                 size="sm"
               />
             ) : (

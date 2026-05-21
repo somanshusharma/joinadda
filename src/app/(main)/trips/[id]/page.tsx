@@ -6,6 +6,7 @@ import { RSVPButton } from "@/components/events/RSVPButton";
 import { OpenEventChatButton } from "@/components/events/OpenEventChatButton";
 import { SignUpCta } from "@/components/shared/SignUpCta";
 import { TripExpensesPanel } from "@/components/trips/TripExpensesPanel";
+import { ReviewList } from "@/components/reviews/ReviewList";
 import type { AttendeePreview } from "@/components/events/AttendeeStack";
 import type { RsvpStatus } from "@/lib/types";
 
@@ -23,6 +24,8 @@ type EventDetailRow = {
   max_attendees: number | null;
   attendee_count: number;
   status: "open" | "full" | "cancelled" | "completed";
+  avg_rating: number | null;
+  review_count: number | null;
   organizer_id: string;
   organizer: {
     id: string;
@@ -63,7 +66,7 @@ export default async function EventDetailPage({
   const { data: event } = await supabase
     .from("events")
     .select(
-      "id, title, description, cover_image_url, type, location, starts_at, ends_at, cost_per_person_inr, cost_notes, max_attendees, attendee_count, status, organizer_id, organizer:organizer_id(id, username, display_name, avatar_url, profession), city:city_id(name), community:community_id(slug, name)",
+      "id, title, description, cover_image_url, type, location, starts_at, ends_at, cost_per_person_inr, cost_notes, max_attendees, attendee_count, status, avg_rating, review_count, organizer_id, organizer:organizer_id(id, username, display_name, avatar_url, profession), city:city_id(name), community:community_id(slug, name)",
     )
     .eq("id", id)
     .maybeSingle<EventDetailRow>();
@@ -286,6 +289,23 @@ export default async function EventDetailPage({
           currentUserId={user?.id ?? null}
           isAttendee={isAttendee}
           members={attendees}
+        />
+      </section>
+
+      {/* Reviews — visible always (rating badge shows even with 0). Posting allowed after trip starts, attendees only. */}
+      <section className="mt-8 px-4 md:px-6">
+        <ReviewList
+          subjectType="trip"
+          subjectId={event.id}
+          subjectLabel="this trip"
+          avgRating={event.avg_rating}
+          reviewCount={event.review_count}
+          canReview={
+            (isAttendee || event.organizer_id === user?.id) &&
+            new Date(event.starts_at).getTime() < Date.now()
+          }
+          contextType="trip"
+          contextId={event.id}
         />
       </section>
 

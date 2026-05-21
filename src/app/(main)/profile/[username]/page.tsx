@@ -8,6 +8,7 @@ import { VibeTag } from "@/components/ui/VibeTag";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FollowButton } from "@/components/profile/FollowButton";
 import { MessageButton } from "@/components/profile/MessageButton";
+import { ReviewList } from "@/components/reviews/ReviewList";
 import { BlockButton } from "@/components/profile/BlockButton";
 import { ReportButton } from "@/components/shared/ReportButton";
 import { EventCard, type EventCardData } from "@/components/events/EventCard";
@@ -28,6 +29,8 @@ type ProfileRow = {
   last_seen_at: string | null;
   current_city: { name: string } | null;
   hometown: { name: string } | null;
+  avg_rating: number | null;
+  review_count: number | null;
 };
 
 export default async function ProfilePage({
@@ -49,7 +52,7 @@ export default async function ProfilePage({
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "id, username, display_name, avatar_url, bio, profession, company, vibe_tags, streak_count, last_seen_at, current_city:current_city_id(name), hometown:hometown_city_id(name)",
+      "id, username, display_name, avatar_url, bio, profession, company, vibe_tags, streak_count, last_seen_at, avg_rating, review_count, current_city:current_city_id(name), hometown:hometown_city_id(name)",
     )
     .eq("username", username)
     .maybeSingle<ProfileRow>();
@@ -216,6 +219,13 @@ export default async function ProfilePage({
         {metCount > 0 ? (
           <Stat label="met IRL" value={metCount} highlight />
         ) : null}
+        {profile.review_count && profile.review_count > 0 ? (
+          <Stat
+            label={`★ ${Number(profile.avg_rating ?? 0).toFixed(1)} rating`}
+            value={profile.review_count}
+            highlight
+          />
+        ) : null}
       </section>
 
       {/* Tabs */}
@@ -230,6 +240,18 @@ export default async function ProfilePage({
         ) : (
           <ProfileCommunities profileId={profile.id} />
         )}
+      </div>
+
+      {/* Reviews (vouches) — anyone signed in can leave one (except self) */}
+      <div className="mt-8 px-4 md:px-6">
+        <ReviewList
+          subjectType="profile"
+          subjectId={profile.id}
+          subjectLabel={profile.display_name}
+          avgRating={profile.avg_rating}
+          reviewCount={profile.review_count}
+          canReview={!isOwner}
+        />
       </div>
     </div>
   );
