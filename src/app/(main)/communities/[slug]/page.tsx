@@ -11,6 +11,8 @@ import { JoinButton } from "@/components/community/JoinButton";
 import { FollowButton } from "@/components/profile/FollowButton";
 import { EventCard, type EventCardData } from "@/components/events/EventCard";
 import { EVENT_COLUMNS, loadAttendeePreviews } from "@/lib/events";
+import { PostCard } from "@/components/feed/PostCard";
+import { POST_COLUMNS, hydratePosts, type RawPost } from "@/lib/feed";
 
 type Tab = "feed" | "events" | "members";
 
@@ -95,10 +97,9 @@ export default async function CommunityPage({
 
       <div className="mt-4">
         {tab === "feed" ? (
-          <EmptyState
-            icon={<Sparkles />}
-            title="No posts yet"
-            description="When members start chatting, you'll see it here. Posting opens up next sprint."
+          <CommunityPosts
+            communityId={community.id}
+            currentUserId={user?.id ?? null}
           />
         ) : tab === "events" ? (
           <CommunityEvents communityId={community.id} />
@@ -135,6 +136,42 @@ function Tabs({ slug, active }: { slug: string; active: Tab }) {
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+async function CommunityPosts({
+  communityId,
+  currentUserId,
+}: {
+  communityId: string;
+  currentUserId: string | null;
+}) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("posts")
+    .select(POST_COLUMNS)
+    .eq("community_id", communityId)
+    .eq("is_deleted", false)
+    .order("created_at", { ascending: false })
+    .limit(40);
+
+  const posts = (data as unknown as RawPost[]) ?? [];
+  if (posts.length === 0) {
+    return (
+      <EmptyState
+        icon={<Sparkles />}
+        title="No posts yet"
+        description="Be the first to drop something in this adda."
+      />
+    );
+  }
+  const hydrated = await hydratePosts(supabase, posts, currentUserId);
+  return (
+    <div className="space-y-4">
+      {hydrated.map((p) => (
+        <PostCard key={p.id} post={p} />
+      ))}
     </div>
   );
 }
