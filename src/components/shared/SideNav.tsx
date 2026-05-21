@@ -10,7 +10,6 @@ const PUBLIC_ITEMS = [
   { href: "/", label: "home", icon: "home" },
   { href: "/trips", label: "trips", icon: "explore" },
   { href: "/hangouts", label: "hangouts", icon: "groups" },
-  { href: "/spots", label: "spots", icon: "storefront" },
   { href: "/communities", label: "addas", icon: "diversity_3" },
 ] as const;
 

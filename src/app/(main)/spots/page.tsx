@@ -44,6 +44,18 @@ export default async function SpotsPage({
 }) {
   const { activity } = await searchParams;
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let canAddSpots = false;
+  if (user) {
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("can_add_spots, is_admin")
+      .eq("id", user.id)
+      .single<{ can_add_spots: boolean; is_admin: boolean }>();
+    canAddSpots = !!(me?.can_add_spots || me?.is_admin);
+  }
 
   let q = supabase
     .from("host_listings")
@@ -81,12 +93,22 @@ export default async function SpotsPage({
             around.
           </p>
         </div>
-        <Link
-          href="/for-hosts"
-          className="text-sm font-semibold text-primary-600 hover:underline"
-        >
-          List your spot — free →
-        </Link>
+        {canAddSpots ? (
+          <Link
+            href="/spots/new"
+            className="inline-flex items-center gap-1.5 bg-primary-500 text-white rounded-full px-5 h-10 font-semibold text-sm hover:bg-primary-600 active:scale-95 transition"
+          >
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            add a spot
+          </Link>
+        ) : (
+          <Link
+            href="/for-hosts"
+            className="text-sm font-semibold text-primary-600 hover:underline"
+          >
+            List your spot — free →
+          </Link>
+        )}
       </header>
 
       {/* Filter chips */}
