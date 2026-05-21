@@ -10,10 +10,17 @@ import { cn } from "@/lib/utils";
 
 type Tab = "post" | "poll";
 
+export type ComposerCommunity = {
+  id: string;
+  name: string;
+  joined?: boolean;
+  sameCity?: boolean;
+};
+
 export function PostComposer({
   communities,
 }: {
-  communities: { id: string; name: string }[];
+  communities: ComposerCommunity[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -57,8 +64,14 @@ export function PostComposer({
         setError(res.error);
         return;
       }
+      const slug = res.community_slug;
       close();
-      router.refresh();
+      // If posted to a community, take user there so they see it immediately.
+      if (slug) {
+        router.push(`/communities/${slug}?tab=feed`);
+      } else {
+        router.refresh();
+      }
     });
   }
 
@@ -194,18 +207,66 @@ export function PostComposer({
               )}
 
               {communities.length > 0 ? (
-                <select
-                  value={communityId}
-                  onChange={(e) => setCommunityId(e.target.value)}
-                  className="h-11 w-full rounded-2xl border border-surface-border bg-surface-elevated px-4 text-sm text-ink focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200"
-                >
-                  <option value="">Post to your feed</option>
-                  {communities.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      Post to {c.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="space-y-1.5">
+                  <label className="block px-1 text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+                    Where to post
+                  </label>
+                  <select
+                    value={communityId}
+                    onChange={(e) => setCommunityId(e.target.value)}
+                    className={cn(
+                      "h-12 w-full rounded-2xl border-2 px-4 text-sm font-semibold text-ink focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-200",
+                      communityId
+                        ? "border-primary-500 bg-primary-50"
+                        : "border-surface-border bg-surface-elevated",
+                    )}
+                  >
+                    <option value="">📰 Your main feed (everyone)</option>
+                    {communities.some((c) => c.joined) ? (
+                      <optgroup label="Your communities">
+                        {communities
+                          .filter((c) => c.joined)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              #{c.name}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ) : null}
+                    {communities.some((c) => !c.joined && c.sameCity) ? (
+                      <optgroup label="In your city">
+                        {communities
+                          .filter((c) => !c.joined && c.sameCity)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              #{c.name}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ) : null}
+                    {communities.some((c) => !c.joined && !c.sameCity) ? (
+                      <optgroup label="Other addas">
+                        {communities
+                          .filter((c) => !c.joined && !c.sameCity)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>
+                              #{c.name}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ) : null}
+                  </select>
+                  {communityId ? (
+                    <p className="px-1 text-xs text-primary-700 font-semibold">
+                      ✓ Posting to #
+                      {communities.find((c) => c.id === communityId)?.name}
+                    </p>
+                  ) : (
+                    <p className="px-1 text-xs text-ink-muted">
+                      Pick an adda to reach a specific crew.
+                    </p>
+                  )}
+                </div>
               ) : null}
 
               <label className="flex items-start gap-2.5 rounded-2xl border border-surface-border bg-surface-muted/60 p-3 text-sm cursor-pointer">

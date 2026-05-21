@@ -52,8 +52,23 @@ export async function createPost(input: CreatePostInput) {
 
   if (error) return { ok: false as const, error: error.message };
 
+  // If posted to a community, look up its slug so the client can redirect.
+  let communitySlug: string | null = null;
+  if (input.community_id) {
+    const { data: c } = await supabase
+      .from("communities")
+      .select("slug")
+      .eq("id", input.community_id)
+      .maybeSingle<{ slug: string }>();
+    communitySlug = c?.slug ?? null;
+    if (communitySlug) revalidatePath(`/communities/${communitySlug}`);
+  }
   revalidatePath("/feed");
-  return { ok: true as const, id: data.id };
+  return {
+    ok: true as const,
+    id: data.id,
+    community_slug: communitySlug,
+  };
 }
 
 export async function deletePost(postId: string) {
