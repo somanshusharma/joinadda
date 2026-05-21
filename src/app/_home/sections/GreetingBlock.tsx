@@ -46,7 +46,7 @@ export function GreetingBlock({
           </h1>
           <p className="mt-3 text-base md:text-lg text-ink-secondary max-w-xl">
             A cozy spot for working folks in Indian cities. Browse hangouts,
-            trips and gossip — and join the adda to RSVP and chat.
+            trips and addas — and join in to RSVP and chat.
           </p>
         </div>
         <div className="shrink-0">

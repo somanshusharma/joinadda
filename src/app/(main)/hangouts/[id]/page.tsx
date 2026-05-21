@@ -9,6 +9,7 @@ import {
   type MetCandidate,
 } from "@/components/hangouts/MetAtPanel";
 import { HangoutPolls } from "@/components/hangouts/HangoutPolls";
+import { HangoutVenueCard } from "@/components/hangouts/HangoutVenueCard";
 import { timeAgo } from "@/lib/utils";
 
 type HangoutDetailRow = {
@@ -24,6 +25,8 @@ type HangoutDetailRow = {
   host_id: string;
   conversation_id: string | null;
   created_at: string;
+  host_listing_id: string | null;
+  activity_tag: string | null;
   host: {
     id: string;
     username: string;
@@ -48,7 +51,7 @@ export default async function HangoutDetailPage({
   const { data: hangout } = await supabase
     .from("hangouts")
     .select(
-      "id, activity, description, time_window, starts_at, location, max_joiners, joiner_count, status, host_id, conversation_id, created_at, host:host_id(id, username, display_name, avatar_url, profession), city:city_id(name)",
+      "id, activity, description, time_window, starts_at, location, max_joiners, joiner_count, status, host_id, conversation_id, created_at, host_listing_id, activity_tag, host:host_id(id, username, display_name, avatar_url, profession), city:city_id(name)",
     )
     .eq("id", id)
     .maybeSingle<HangoutDetailRow>();
@@ -117,6 +120,41 @@ export default async function HangoutDetailPage({
       .eq("context_type", "hangout")
       .eq("context_id", hangout.id);
     initialTagged = (myTags ?? []).map((t) => t.met_id);
+  }
+
+  // Linked venue
+  type VenueRow = {
+    id: string;
+    title: string;
+    description: string | null;
+    address: string | null;
+    map_url: string | null;
+    price_inr: number | null;
+    price_unit: "per_hour" | "per_person" | "per_session" | "flat" | null;
+    capacity_min: number | null;
+    capacity_max: number | null;
+    contact_phone: string | null;
+    contact_whatsapp: string | null;
+    photo_url: string | null;
+    is_featured: boolean;
+    activity_tag: string;
+    host: {
+      id: string;
+      username: string;
+      display_name: string;
+      is_verified_host: boolean | null;
+    } | null;
+  };
+  let venue: VenueRow | null = null;
+  if (hangout.host_listing_id) {
+    const { data: vrow } = await supabase
+      .from("host_listings")
+      .select(
+        "id, title, description, address, map_url, price_inr, price_unit, capacity_min, capacity_max, contact_phone, contact_whatsapp, photo_url, is_featured, activity_tag, host:host_id(id, username, display_name, is_verified_host)",
+      )
+      .eq("id", hangout.host_listing_id)
+      .maybeSingle<VenueRow>();
+    venue = vrow ?? null;
   }
 
   const whenLabel = formatWhen(hangout.time_window, hangout.starts_at);
@@ -248,6 +286,15 @@ export default async function HangoutDetailPage({
           ) : null}
         </div>
       </article>
+
+      {/* Linked venue (host listing) */}
+      {venue ? (
+        <HangoutVenueCard
+          venue={venue}
+          hangoutTitle={hangout.activity}
+          whenLabel={whenLabel}
+        />
+      ) : null}
 
       {/* Quick polls */}
       <section className="mt-8">

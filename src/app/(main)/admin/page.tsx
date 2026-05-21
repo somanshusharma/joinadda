@@ -71,6 +71,16 @@ export default async function AdminPage() {
         {openCount ?? 0} open report{openCount === 1 ? "" : "s"}. Keep it warm.
       </p>
 
+      <nav className="mt-4 flex flex-wrap gap-2">
+        <Link
+          href="/admin/leads"
+          className="inline-flex items-center gap-1.5 px-4 h-10 rounded-full bg-primary-500 text-white font-semibold text-sm hover:bg-primary-600 transition"
+        >
+          <span className="material-symbols-outlined text-[18px]">storefront</span>
+          Host leads
+        </Link>
+      </nav>
+
       <section className="mt-6">
         <h2 className="mb-3 text-lg font-semibold text-ink">Reports</h2>
         {open.length === 0 ? (

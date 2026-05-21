@@ -11,6 +11,8 @@ export type CreateHangoutInput = {
   starts_at: string | null;
   location: string;
   max_joiners: number;
+  activity_tag?: string | null;
+  host_listing_id?: string | null;
 };
 
 export async function createHangout(input: CreateHangoutInput) {
@@ -34,6 +36,31 @@ export async function createHangout(input: CreateHangoutInput) {
     return { ok: false as const, error: "Set your city in your profile first" };
   }
 
+  // If a listing was picked, make sure it's real, active, and in the user's city.
+  // Auto-fill location from the listing's address so attendees see venue info.
+  let resolvedLocation = location;
+  let listingId: string | null = input.host_listing_id ?? null;
+  if (listingId) {
+    const { data: listing } = await supabase
+      .from("host_listings")
+      .select("id, city_id, address, is_active, title")
+      .eq("id", listingId)
+      .single<{
+        id: string;
+        city_id: string;
+        address: string | null;
+        is_active: boolean;
+        title: string;
+      }>();
+    if (!listing || !listing.is_active) {
+      listingId = null;
+    } else if (listing.city_id !== me.current_city_id) {
+      listingId = null;
+    } else if (listing.address && !resolvedLocation) {
+      resolvedLocation = `${listing.title} · ${listing.address}`;
+    }
+  }
+
   const { data, error } = await supabase
     .from("hangouts")
     .insert({
@@ -43,9 +70,11 @@ export async function createHangout(input: CreateHangoutInput) {
       description: input.description?.trim() || null,
       time_window: input.time_window,
       starts_at: input.starts_at,
-      location,
+      location: resolvedLocation,
       max_joiners: Math.max(2, Math.min(10, input.max_joiners)),
       visibility: "city",
+      activity_tag: input.activity_tag ?? null,
+      host_listing_id: listingId,
     })
     .select("id")
     .single();

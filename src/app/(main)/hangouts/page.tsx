@@ -121,13 +121,24 @@ export default async function HangoutsPage({
               casual invites. just say &apos;i&apos;m in&apos;.
             </p>
           </div>
-          <Link
-            href="/hangouts/new"
-            className="inline-flex items-center gap-2 bg-primary-500 text-white rounded-full px-6 h-12 font-semibold text-sm w-fit active:scale-95 transition-transform"
-          >
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            plan one
-          </Link>
+          <div className="flex gap-2 w-fit">
+            <Link
+              href="/spots"
+              className="inline-flex items-center gap-1.5 border border-surface-border bg-white text-ink-secondary rounded-full px-5 h-12 font-semibold text-sm active:scale-95 transition-all hover:border-primary-300"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                storefront
+              </span>
+              browse spots
+            </Link>
+            <Link
+              href="/hangouts/new"
+              className="inline-flex items-center gap-2 bg-primary-500 text-white rounded-full px-6 h-12 font-semibold text-sm active:scale-95 transition-transform"
+            >
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              plan one
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { hydratePosts, POST_COLUMNS, type RawPost } from "@/lib/feed";
 
-export async function OfficeGossip({ userId }: { userId: string | null }) {
+export async function FeedPreview({ userId }: { userId: string | null }) {
   const supabase = await createClient();
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
@@ -19,7 +19,7 @@ export async function OfficeGossip({ userId }: { userId: string | null }) {
     return (
       <div className="bg-sky/40 rounded-3xl border border-sky/60 p-6">
         <p className="text-sm text-ink-secondary">
-          Quiet in the office today. Drop the first hot take →{" "}
+          Quiet in the addas today. Drop the first hot take →{" "}
           <Link href="/feed" className="font-semibold text-primary-600">
             tap +
           </Link>
@@ -46,9 +46,7 @@ export async function OfficeGossip({ userId }: { userId: string | null }) {
         const displayName = p.is_anonymous
           ? p.anonymous_handle ?? "Anonymous"
           : p.author.display_name;
-        const href = p.is_anonymous
-          ? `/feed/post/${p.id}`
-          : `/feed/post/${p.id}`;
+        const href = `/feed/post/${p.id}`;
         return (
           <Link
             key={p.id}

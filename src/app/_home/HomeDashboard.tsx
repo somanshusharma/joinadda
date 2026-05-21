@@ -5,7 +5,7 @@ import { GreetingBlock } from "./sections/GreetingBlock";
 import { TonightHero } from "./sections/TonightHero";
 import { TripsThisWeekend } from "./sections/TripsThisWeekend";
 import { HangoutsPreview } from "./sections/HangoutsPreview";
-import { OfficeGossip } from "./sections/OfficeGossip";
+import { FeedPreview } from "./sections/FeedPreview";
 import { DailyMatchSection } from "./sections/DailyMatchSection";
 import { LiveRoomsPlaceholder } from "./sections/LiveRoomsPlaceholder";
 import { WhosAround } from "./sections/WhosAround";
@@ -69,9 +69,9 @@ export function HomeDashboard({
         </Suspense>
       </Section>
 
-      <Section title="office gossip today" href="/feed">
+      <Section title="adda buzz today" href="/feed">
         <Suspense fallback={<Skeleton className="h-32 rounded-3xl" />}>
-          <OfficeGossip userId={userId} />
+          <FeedPreview userId={userId} />
         </Suspense>
       </Section>
 

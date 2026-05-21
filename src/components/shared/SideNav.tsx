@@ -10,11 +10,12 @@ const PUBLIC_ITEMS = [
   { href: "/", label: "home", icon: "home" },
   { href: "/trips", label: "trips", icon: "explore" },
   { href: "/hangouts", label: "hangouts", icon: "groups" },
+  { href: "/spots", label: "spots", icon: "storefront" },
   { href: "/communities", label: "addas", icon: "diversity_3" },
 ] as const;
 
 const AUTHED_ITEMS = [
-  { href: "/feed", label: "office gossip", icon: "forum" },
+  { href: "/feed", label: "the feed", icon: "forum" },
   { href: "/chat", label: "DMs", icon: "chat_bubble" },
   { href: "/match", label: "daily match", icon: "favorite" },
 ] as const;

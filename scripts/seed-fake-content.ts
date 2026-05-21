@@ -1245,6 +1245,226 @@ async function seedHangouts(
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+//  Host listings (marketplace supply side)
+// ─────────────────────────────────────────────────────────────
+
+const HOST_LISTINGS: Array<{
+  title: string;
+  description: string;
+  activity_tag: string;
+  address: string;
+  price_inr: number | null;
+  price_unit: "per_hour" | "per_person" | "per_session" | "flat" | null;
+  capacity_min: number;
+  capacity_max: number;
+  contact_phone: string;
+  contact_whatsapp: string;
+  photo_url: string;
+  is_featured?: boolean;
+}> = [
+  {
+    title: "Champions Box Cricket Arena",
+    description:
+      "Floodlit box-cricket turf with seating, a chill-out lounge, and Bluetooth speakers. Bats and balls included.",
+    activity_tag: "cricket",
+    address: "Sector 82, Mohali",
+    price_inr: 1200,
+    price_unit: "per_hour",
+    capacity_min: 6,
+    capacity_max: 12,
+    contact_phone: "+919876543210",
+    contact_whatsapp: "+919876543210",
+    photo_url:
+      "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80",
+    is_featured: true,
+  },
+  {
+    title: "Strike Sports Arena",
+    description: "Premium turf with cafe + pro coaches available on request.",
+    activity_tag: "cricket",
+    address: "Phase 11, Mohali",
+    price_inr: 1500,
+    price_unit: "per_hour",
+    capacity_min: 8,
+    capacity_max: 14,
+    contact_phone: "+919812345678",
+    contact_whatsapp: "+919812345678",
+    photo_url:
+      "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=800&q=80",
+  },
+  {
+    title: "Goal Zone 5-a-side Football",
+    description: "Astroturf football, includes bibs and ball. Showers on-site.",
+    activity_tag: "football",
+    address: "Sector 36, Chandigarh",
+    price_inr: 1800,
+    price_unit: "per_hour",
+    capacity_min: 8,
+    capacity_max: 12,
+    contact_phone: "+919811112222",
+    contact_whatsapp: "+919811112222",
+    photo_url:
+      "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+  },
+  {
+    title: "Sarva Yoga — Weekend Workshops",
+    description:
+      "Drop-in vinyasa and yin sessions. Mats provided. Beginners welcome.",
+    activity_tag: "yoga",
+    address: "Sector 35, Chandigarh",
+    price_inr: 300,
+    price_unit: "per_person",
+    capacity_min: 4,
+    capacity_max: 20,
+    contact_phone: "+919833445566",
+    contact_whatsapp: "+919833445566",
+    photo_url:
+      "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=800&q=80",
+    is_featured: true,
+  },
+  {
+    title: "Open Community Yoga at Leisure Valley",
+    description:
+      "Free Sunday morning yoga in the park. Just bring a mat. Donate if you'd like.",
+    activity_tag: "yoga",
+    address: "Leisure Valley, Sector 10, Chandigarh",
+    price_inr: null,
+    price_unit: null,
+    capacity_min: 2,
+    capacity_max: 50,
+    contact_phone: "+919900112233",
+    contact_whatsapp: "+919900112233",
+    photo_url:
+      "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80",
+  },
+  {
+    title: "Game Palacio — Board Game Cafe",
+    description:
+      "200+ board games, snacks, and bottomless coffee. Book a table for your crew.",
+    activity_tag: "board_games",
+    address: "Elante Mall, Chandigarh",
+    price_inr: 200,
+    price_unit: "per_person",
+    capacity_min: 2,
+    capacity_max: 8,
+    contact_phone: "+919844556677",
+    contact_whatsapp: "+919844556677",
+    photo_url:
+      "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?w=800&q=80",
+  },
+  {
+    title: "Bikat Adventures — Triund Weekend Trek",
+    description:
+      "Saturday-Sunday Triund trek. Includes transport from Chandigarh, stay, all meals, certified guide.",
+    activity_tag: "trek",
+    address: "Pickup: Sector 17 Plaza, Chandigarh",
+    price_inr: 3200,
+    price_unit: "per_person",
+    capacity_min: 4,
+    capacity_max: 20,
+    contact_phone: "+919855667788",
+    contact_whatsapp: "+919855667788",
+    photo_url:
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80",
+    is_featured: true,
+  },
+  {
+    title: "Whistling Duck — Rooftop Brunch",
+    description:
+      "Weekend brunch buffet with live music. Reserve a long table for the squad.",
+    activity_tag: "brunch",
+    address: "Sector 26, Chandigarh",
+    price_inr: 999,
+    price_unit: "per_person",
+    capacity_min: 4,
+    capacity_max: 16,
+    contact_phone: "+919866778899",
+    contact_whatsapp: "+919866778899",
+    photo_url:
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+  },
+  {
+    title: "Blue Tokai Coffee — Working Sundays",
+    description:
+      "Quiet cafe, fast wifi, and the best filter coffee in town. Co-working friendly.",
+    activity_tag: "coffee",
+    address: "Elante, Chandigarh",
+    price_inr: null,
+    price_unit: null,
+    capacity_min: 2,
+    capacity_max: 10,
+    contact_phone: "+919877889900",
+    contact_whatsapp: "+919877889900",
+    photo_url:
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80",
+  },
+  {
+    title: "Smaaash Bowling Lanes",
+    description:
+      "Bowling, arcade, and food. Per-lane pricing fits 4-6 people comfortably.",
+    activity_tag: "bowling",
+    address: "Elante Mall, Chandigarh",
+    price_inr: 800,
+    price_unit: "per_hour",
+    capacity_min: 4,
+    capacity_max: 6,
+    contact_phone: "+919888990011",
+    contact_whatsapp: "+919888990011",
+    photo_url:
+      "https://images.unsplash.com/photo-1538902949744-2b75e1ee9aa6?w=800&q=80",
+  },
+];
+
+async function seedHostListings(
+  personas: Array<{ id: string; persona: Persona }>,
+  client: SupabaseClient,
+) {
+  const { data: cities } = await client.from("cities").select("id, slug");
+  const mohaliId = cities?.find((c) => c.slug === "mohali")?.id;
+  if (!mohaliId || personas.length === 0) return;
+
+  // Promote a handful of personas to verified hosts (rotating)
+  const hostPool = personas.slice(0, Math.min(personas.length, 6));
+  for (const h of hostPool) {
+    await client
+      .from("profiles")
+      .update({ is_verified_host: true })
+      .eq("id", h.id);
+  }
+
+  for (let i = 0; i < HOST_LISTINGS.length; i++) {
+    const l = HOST_LISTINGS[i];
+    const host = hostPool[i % hostPool.length];
+
+    // Skip if listing with this title already exists (idempotent re-seed)
+    const { data: existing } = await client
+      .from("host_listings")
+      .select("id")
+      .eq("title", l.title)
+      .maybeSingle();
+    if (existing) continue;
+
+    await client.from("host_listings").insert({
+      host_id: host.id,
+      city_id: mohaliId,
+      title: l.title,
+      description: l.description,
+      activity_tag: l.activity_tag,
+      address: l.address,
+      price_inr: l.price_inr,
+      price_unit: l.price_unit,
+      capacity_min: l.capacity_min,
+      capacity_max: l.capacity_max,
+      contact_phone: l.contact_phone,
+      contact_whatsapp: l.contact_whatsapp,
+      photo_url: l.photo_url,
+      is_active: true,
+      is_featured: l.is_featured ?? false,
+    });
+  }
+}
+
 async function main() {
   console.log("→ ensuring fake personas (with HQ avatars)…");
   const personas = await ensurePersonas();
@@ -1273,6 +1493,9 @@ async function main() {
 
   console.log("→ seeding events (with cover images)…");
   await seedEvents(personas, supabase);
+
+  console.log("→ seeding host listings (marketplace supply)…");
+  await seedHostListings(personas, supabase);
 
   console.log("→ seeding hangouts…");
   await seedHangouts(personas, supabase);
